@@ -18,57 +18,77 @@ const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(5, 3),
   },
+  form: {
+    width: '100%',
+  },
+  errorMessage: {
+    color: theme.palette.error.main,
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  buttonWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: theme.spacing(2),
+  },
 }));
 
-const SignIn = props => {
-  const {
-    validateEmail,
-    validatePassword,
-    signMeIn,
-    emailError,
-    passwordError,
-    isProcessing,
-    signInError,
-    dismissError,
-  } = props;
-
+const SignIn = ({
+  validateEmail,
+  validatePassword,
+  signMeIn,
+  emailError,
+  passwordError,
+  isProcessing,
+  signInError,
+  dismissError,
+}) => {
   const classes = useStyles();
 
   return (
     <Container className={styles.container}>
       {isProcessing && <LinearProgress />}
       <Paper elevation={2} className={classes.root}>
-        <form noValidate autoComplete="off" onSubmit={signMeIn}>
-          <Grid container spacing={1}>
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={signMeIn}
+          className={classes.form}
+        >
+          <Grid container spacing={2}>
             <Grid item xs={12}>
               <Typography variant="h1" className={styles.title}>
                 Sign In
               </Typography>
             </Grid>
+
             {signInError && (
-              <Grid item xs={12} className={styles.error}>
-                <Typography variant="overline">
+              <Grid item xs={12} role="alert" className={styles.error}>
+                <Typography variant="overline" className={classes.errorMessage}>
                   {signInError}
                   <Button
-                    // color="secondary"
-                    disableRipple={true}
+                    disableRipple
                     onClick={dismissError}
+                    size="small"
+                    color="secondary"
                   >
                     Dismiss
                   </Button>
                 </Typography>
               </Grid>
             )}
+
             <Grid item xs={12}>
               <InputField
-                focus={true}
                 label="Email"
                 type="email"
                 validate={validateEmail}
                 errorMessage={emailError}
                 disabled={isProcessing}
+                autoFocus
               />
             </Grid>
+
             <Grid item xs={12}>
               <InputField
                 label="Password"
@@ -78,40 +98,33 @@ const SignIn = props => {
                 disabled={isProcessing}
               />
             </Grid>
+
             <Grid item xs={12} className={styles.passwordResetLink}>
               <Link component={RouterLink} to={ROUTES.RESET_PASSWORD}>
                 <Typography variant="subtitle1">Forgot Password?</Typography>
               </Link>
             </Grid>
-            <Grid container className={styles.btnWrapper}>
-              <Grid item xs={6}>
-                <div className={styles.btnWrapperChild1}>
-                  <RouterLink to={ROUTES.SIGNUP} className={styles.link}>
-                    <Button
-                      variant="outlined"
-                      // color="secondary"
-                      size="large"
-                      disabled={isProcessing}
-                    >
-                      Create Account
-                    </Button>
-                  </RouterLink>
-                </div>
-              </Grid>
-              <Grid item xs={6}>
-                <div className={styles.btnWrapperChild2}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={signMeIn}
-                    disabled={isProcessing}
-                  >
-                    Sign Me In
-                  </Button>
-                </div>
-              </Grid>
+
+            <Grid item xs={12} className={classes.buttonWrapper}>
+              <RouterLink to={ROUTES.SIGNUP} className={styles.link}>
+                <Button
+                  variant="outlined"
+                  size="large"
+                  disabled={isProcessing}
+                >
+                  Create Account
+                </Button>
+              </RouterLink>
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                disabled={isProcessing || emailError || passwordError}
+              >
+                Sign In
+              </Button>
             </Grid>
           </Grid>
         </form>
